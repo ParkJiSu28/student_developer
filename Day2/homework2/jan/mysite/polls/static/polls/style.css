@@ -1,0 +1,11 @@
+li a {
+    color: green;
+}
+
+
+body {
+    background: white url("images/background.gif") no-repeat right bottom;
+}
+
+
+Reload http://localhost:8000/polls/ and you should see the background loaded in the bottom right 
