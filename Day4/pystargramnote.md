@@ -18,4 +18,35 @@
 
 
 
+##2.기획하기.
+
+***
+**virtualenv 사용하기.**
+
+`` 
+python -m venv myvenv
+``
+
+``
+ myvenv\Scripts\activate.bat
+``
+
+** django 설치하기**
+
+``
+pip install django
+``
+
+``
+ python -m django --version
+``
+ (장고버전확인하기.)
+ 
+
+Postman - REST Client는 HTTP 기반으로 동작하는 API를 편리하게 호출하는 클라이언트(client)입니다.postman은 개발에 용이한 클라이언트 인터페이스를 제공하는 도구.
+
+**python**
+
+들여 쓰기가 규칙 준수.
+
 
