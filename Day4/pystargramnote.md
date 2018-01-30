@@ -156,7 +156,62 @@ python manage.py migrate
 
 
 
+#4.Photo 모델로 Admin 영역에서 데이터 다루기.
+---
 
+##Admin에서 Photo모델에 데이터 넣기.
+``
+from django.contrib import admin
+``
+
+``
+from .models import Photo
+``
+
+``
+admin.site.register(Photo)
+``
+
+
+blank 필드옵션 
+:
+빈칸을 의미 한다. 
+본문에 내용이 없어도 에러 나지 않음.
+
+##파일 업로드 경로지정.
+
+``
+image = models.ImageField(upload_to='uploads/%Y/%m/%d/orig')
+``
+
+``
+filtered_image = models.ImageField(upload_to='uploads/%Y/%m/%d/filtered')
+``
+
+연도 월 일 시간으로 구분되어질 수 있도록 이미지파일을 관리 할 수 있음.
+ 
+#첨부파일 삭제하기.
+ 
+Photo모델의 객체를 지워보자.
+:객체 자체는 지워지지만 연결된 파일들은 삭제되지 않는다.
+Django의 모델 기능은 모델 객체가 삭제되어도 그 모델 객체의 파일 필드에 연결된 파일을 지우지 않는다.
+
+delete라는 인스턴스 메서들 호출하여 모델 객체를 지울 수 있음
+
+class Photo(models.Model):
+    # 중략
+    
+    def delete(self, *args, **kwargs):
+        self.image.delete()
+        self.filtered_image.delete()
+        super(Photo, self).delete(*args, **kwargs)
+
+###*args와 **kwargs 는 함수가 넘겨받는 인자를 미리 알지 못하는 경우에 함수가 넘겨받는 인자를 담는 객체이다
+python class의 인스턴스 메서드 안에서 속성에 접근하려면 self.속성이름 으로 접근. self는 delete 인스턴스 메서드에서 첫번째 인자로 넘겨 받는다 따라서 
+``
+self.filtered_image.delete(*args, **kwargs)
+``
+뒤에 코드가 없으면 첨부된 업로드 파일만 삭제되고 모델 객체는 삭제되지 않는다. 지우는건 Model클래스에 있는 delete메소드이기 때문이다. 
 
 
 
