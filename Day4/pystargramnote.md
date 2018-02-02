@@ -214,12 +214,106 @@ self.filtered_image.delete(*args, **kwargs)
 뒤에 코드가 없으면 첨부된 업로드 파일만 삭제되고 모델 객체는 삭제되지 않는다. 지우는건 Model클래스에 있는 delete메소드이기 때문이다. 
 
 
+#5. URL에 VIEW함수 연결해서 사진 출력하기.
+
+---
+이용자가 URL로 접근하여 뭔가를 요청하면 그 URL에 대한 정보를 
+urls.py로 대표되는 URL로 접근하여 뭔가를 요청하면 그 정보를 실행함.
+
+1.BaseHandler 클래스가 URL로 요청(request) 받음
+
+2.RegexURLResolver로 URL을 보냄
+
+3.RegexURLResolver가 URL에 연결된 View를 찾아서 callback 함수와 인자 등을 BaseHandler로 반환
+
+4.BaseHandler에서 이 함수를 실행하여 결과값인 출력물을 받음.
+
+5.출력
+
+**이렇게 사용하기 위에서 위에 내용이 필요함**
+
+
+1.Model이나 View에 기능을 구현
+
+2.이용자가 서버에 있는 자원에 접근하는 경로인 URL을 URL Dispatch 처리 모듈인 urls.py에 등록하고 그 URL에 구현부를 연결
+
+-views.py
 
 
 
+-urls.py
+
+`
+from django.conf.urls import url
+`
+`
+from django.contrib import admin
+`
+`
+from photos.views import hello  
+`
+
+`
+urlpatterns = [
+    url(r'^hello/$', hello),  
+    url(r'^admin/', admin.site.urls),
+]
+`
 
 
+정규표현식
+
+* ^ : ^ 문자 뒤에 나열된 문자열로 시작
+
+* [0-9] : 0부터 9까지 범위에 속하는 문자
+
+* + : 앞에 지정한 문자열 패턴이 한 번 이상 반복
+
+* () : 패턴 부분을 묶어냄(grouping)
+
+* ?P<pk> : 묶어낸 패턴 부분에 이름을 pk로 붙임.
+
+* $ : $ 문자 앞에 나열된 문자열로 끝
+
+from .models import Photo
+
+##Photo 모델로 객체 찾기 
+`
+def detail(request, pk):
+    photo = Photo.objects.get(pk=pk)
+`
+`
+    messages = (
+        '<p>{pk}번 사진 보여줄게요</p>'.format(pk=photo.pk),
+        '<p>주소는 {url}</p>'.format(url=photo.image.url),
+    )
+`
+
+`
+    return HttpResponse('\n'.join(messages))
+`
 
 
+photo모델의 objects 객체의 get 메서드를 이용해 뷰 함수의 인자pk에 해당하는  사진 데이터를 가져와서 photo변수에 담음.
+모델에 있는 image  필드애 접근해 url 속성을 이용해 지정된 사진 출력
 
 
+###django는 이용자가 업로드한 파일을 MEDIA_URL과 MEDIA_ROOT라는 설정값을 참조하여 제공
+
+원래는 urls.py에도 이와 관련된 내용을 등록해야한다.
+
+django는 이런걸 처리해주는 기능이 있다.
+
+`
+django.conf.urls.static      # 여기에 있는 함수static을 사용
+`
+
+`
+urlpatterns += static('upload_files', document_root=settings.MEDIA_ROOT)
+`
+
+이런식으로 사용하면됨.
+
+##render 와 HttpResponse
+
+HttpResponse는 django view가 HTTP handler로 보내는 출력물의 가장 기본형택인 객체를 만드는 클래스. 따라서 템플릿을 같은걸 처리하는 기능이 없음 따라서 템플릿을 따로 처리하여 그려낸 출력물을 문자열 긎채로 받아서 출력해야함. 따라서 이런 처리에 필요한 코드는 꽤 반복되므로 반복되는 부분을 별도함수로 만들어서 편하게 템플릿으로 그려낸 출력물을 HttpResponse 로 보내는 함수가 바로 render이다. render로 반환하는 최종값도 결국은 HttpResponse 클래스로 만든 객체이다.
