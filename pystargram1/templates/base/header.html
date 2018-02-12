@@ -1,0 +1,11 @@
+<p>Header</p>
+
+{% if request.user.is_authenticated %}
+<div>
+<a href="{% url 'logout' %}">로그아웃</a>
+    </div>
+{% else %}
+<div>
+<a href="{% url 'login' %}">로그인</a>
+</div>
+{% endif %}

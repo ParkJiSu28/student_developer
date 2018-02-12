@@ -1,0 +1,12 @@
+{% extends 'index.html' %}
+
+{% block content %}
+        <p>{{ photo.pk}}번 사진 보여줄게요</p>
+        <p>주소는 {{ photo.image.url }}</p>
+        <p><img src="{{ photo.image.url}}" style="width:300px; height:300px;"/></p>
+        <form method="POST" action="{% url 'photos:delete' %}">
+                {% csrf_token %}
+                <input type="hidden" name="photo_id" value="{{ photo.pk }}">
+                <button type="submit">삭제</button>
+        </form>
+{% endblock %}
