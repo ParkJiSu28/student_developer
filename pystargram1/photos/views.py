@@ -1,8 +1,10 @@
 from django.conf import settings
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from .models import Photo
 from .forms import PhotoForm
-
+from photos.forms import CreateUserForm
 
 def detail(requset, photo_id):
     photo = get_object_or_404(Photo, pk=photo_id)
@@ -39,8 +41,8 @@ def index(request):
 
 
 def delete(request):
-    #1. POST요청으로온 pk를 받아서 photo모델이 맞는지 찾는다.
-    #2. 틀릴경우 , 다시 해당 페이지/   맞을경우 , photo를 삭제하고 , list 페이지를 보여준다.
+    # 1. POST요청으로온 pk를 받아서 photo모델이 맞는지 찾는다.
+    # 2. 틀릴경우 , 다시 해당 페이지/   맞을경우 , photo를 삭제하고 , list 페이지를 보여준다.
     if request.method == 'POST':
         photo_id = request.POST['photo_id']
         try:
@@ -49,3 +51,20 @@ def delete(request):
             return redirect('photos:detail', pk=photo_id)
         photo.delete()
     return redirect('photos:list')
+
+
+def signup(request):
+    if request.method == "POST":
+        createuserform = CreateUserForm(request.POST)
+        if createuserform.is_valid():
+            user = createuserform.save(commit=False)
+            user.save()
+
+            return HttpResponseRedirect(reverse("signup_ok"))
+    elif request.method == "GET":
+        createuserform = CreateUserForm()
+    return render(request, "registration/signup.html", {
+        "createuserform": createuserform,
+    })
+
+

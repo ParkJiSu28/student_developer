@@ -8,4 +8,5 @@ urlpatterns = [
     re_path(r'^upload/$', views.create, name='create'),
     path('', views.index, name='list'),
     path('delete/', views.delete, name='delete'),
+
 ]

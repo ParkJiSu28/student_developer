@@ -14,30 +14,39 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
+from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.contrib.auth import views as auth_views
+from django.views.generic import TemplateView
+from photos import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('photos/', include('photos.urls')),
-    path(
-        'accounts/login/',
-        auth_views.login,
-        name='login',
-        kwargs={
-            'template_name': 'accounts/login.html'
-        }
-    ),
-    path(
-        'accounts/logout/',
-        auth_views.logout,
-        name='logout',
-        kwargs={
-            'next_page': settings.LOGIN_URL
-        }
-    ),
-]
+
+                       path('admin/', admin.site.urls),
+                       path('photos/', include('photos.urls')),
+                       path(
+                           'accounts/login/',
+                           auth_views.login,
+                           name='login',
+                           kwargs={
+                               'template_name': 'accounts/login.html'
+                           }
+                       ),
+                       path(
+                           'accounts/logout/',
+                           auth_views.logout,
+                           name='logout',
+                           kwargs={
+                               'next_page': settings.LOGIN_URL
+                           }
+                       ),
+
+                       re_path(r'^signup/$', views.signup, name='signup'),
+                       re_path(r'^signup_ok/$', TemplateView.as_view(
+                           template_name='registration/signup_ok.html'
+                       ), name='signup_ok'),
+                       ]
 
 urlpatterns += static('upload_files', document_root=settings.MEDIA_ROOT)
