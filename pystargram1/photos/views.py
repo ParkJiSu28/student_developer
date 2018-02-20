@@ -5,6 +5,7 @@ from django.urls import reverse
 from .models import Photo
 from .forms import PhotoForm
 from photos.forms import CreateUserForm
+from django.contrib import messages
 
 def detail(requset, photo_id):
     photo = get_object_or_404(Photo, pk=photo_id)
@@ -47,7 +48,8 @@ def delete(request):
         photo_id = request.POST['photo_id']
         try:
             photo = Photo.objects.get(pk=photo_id, user=request.user)
-        except:
+        except :
+
             return redirect('photos:detail', pk=photo_id)
         photo.delete()
     return redirect('photos:list')
@@ -65,6 +67,5 @@ def signup(request):
         createuserform = CreateUserForm()
     return render(request, "registration/signup.html", {
         "createuserform": createuserform,
+
     })
-
-
